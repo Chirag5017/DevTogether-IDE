@@ -1,5 +1,5 @@
 import path from "path"
-import fs from "fs"
+import fs from "fs/promises"
 
 
 const generateFileTree = async (directory) => {
@@ -7,16 +7,19 @@ const generateFileTree = async (directory) => {
   
     async function fileTree(directory, currentTree) {
   
-      const files = fs.readdir(directory);
+      const files = await fs.readdir(directory);
+      //console.log(files);
       for (const file of files) {
         const filePath = path.join(directory, file);
-        const stat = fs.stat(filePath);
+        const stat = await fs.stat(filePath);
+        ///console.log(filePath);
+        
   
         if (stat.isDirectory()) {
-          currentTree = {};
+          currentTree[file] = {};
           await fileTree(filePath, currentTree[file]);
         } else {
-          currentTree = null;
+          currentTree[file] = null;
         }
       }
     }
