@@ -3,16 +3,13 @@ import axios from "axios";
 
 const FileTreeNode = ({  fileName , nodes }) => {
     return (
-      <div style={{ marginLeft: "10px" }}>
+      <div className={"ml-3"}>
         <p>{fileName}</p>
         {nodes && (
           <ul>
             {Object.keys(nodes).map((child) => (
               <li key={child}>
-                <FileTreeNode
-                  fileName={child}
-                  nodes={nodes[child]}
-                />
+                <FileTreeNode fileName={child} nodes={nodes[child]} />
               </li>
             ))}
           </ul>
