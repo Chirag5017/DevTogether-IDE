@@ -3,9 +3,10 @@ import { generateFileTree } from "../controllers/generateFileTree.controller.js"
 
 const router = Router()
 
-router.route("/file-path").get(async (req,res) => {
+router.route("/file-path").get(async (_,res) => {
     const file = await generateFileTree("./user")
-    res.json({fileTree : file})
+    
+    res.json({tree:file})
 })
 
 export default router;
