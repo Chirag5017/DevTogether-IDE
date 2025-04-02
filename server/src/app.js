@@ -4,6 +4,7 @@ import http from "http"
 import { Server as SocketServer}  from "socket.io"
 import pty from "node-pty-prebuilt-multiarch"
 import os from "os"
+import chokidar from "chokidar"
 
 
 const app = express()
@@ -29,6 +30,12 @@ const   ptyProcess = pty.spawn(shell, [], {
   cwd: process.env.INIT_CWD + "./user", // terminal start on current working directory
   env: process.env
 });
+
+chokidar.watch('./user').on('all', (event, path) => {
+    console.log(event,path);
+    
+   io.emit("file:refresh")
+  });
 
 ptyProcess.onData(data =>{
     io.emit("terminal:data", data)

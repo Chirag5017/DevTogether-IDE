@@ -7,7 +7,9 @@ const App = () => {
   return (
     <div className = {"flex flex-col"  }>
     <div className = {"h-[54vh]"}>
-     <div><FileTree /></div>
+     <div>
+      <FileTree />
+      </div>
      <div></div>
     </div>
     <div>

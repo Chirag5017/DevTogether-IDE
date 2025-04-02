@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import socket from "../socket.js";
 
-const FileTreeNode = ({  fileName , nodes }) => {
+
+// nodes for checking weather the file is a directory or not null means file 
+const FileTreeNode = ({  treeName , nodes }) => {
     return (
       <div className={"ml-3"}>
-        <p>{fileName}</p>
+        <p>{treeName}</p>
         {nodes && (
           <ul>
             {Object.keys(nodes).map((child) => (
               <li key={child}>
-                <FileTreeNode fileName={child} nodes={nodes[child]} />
+                <FileTreeNode treeName={child} nodes={nodes[child]} />
               </li>
             ))}
           </ul>
@@ -28,6 +31,7 @@ const FileTreeNode = ({  fileName , nodes }) => {
       useEffect(() => {
         getFileTree();
       },[])
-    return <FileTreeNode  fileName="/"  nodes={fileTree} />;
+      socket.on("file:refresh", getFileTree())
+    return <FileTreeNode  treeName="/"  nodes={fileTree} />;
   };
   export default FileTree;
