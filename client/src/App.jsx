@@ -105,6 +105,7 @@ const App = () => {
             <FileTree 
               onSelect={(path) => setSelectedFile(path)}
               setSelectedFolder={setSelectedFolder}
+              selectedFile={selectedFile}
             />
           </div>
         </div>
@@ -126,9 +127,15 @@ const App = () => {
             </div>
           )}
           
-          {/* Breadcrumb */}
-          <div className="bg-[#252525] px-4 py-1 text-xs text-[#ffffff] border-b border-[#333333]">
-            {selectedFile ? selectedFile.replaceAll("/", " > ") : "Welcome to DevTogether"}
+          {/* Modified Breadcrumb */}
+          <div className="bg-[#252525] px-4 py-1 text-xs border-b border-[#333333]">
+            {selectedFile ? (
+              <span className="text-[#ffffff]">{selectedFile.replaceAll("/", " > ")}</span>
+            ) : (
+              <div className="flex justify-center">
+                <span className="text-[#ffffff]">Welcome to DevTogether</span>
+              </div>
+            )}
           </div>
           
           {/* Editor area */}
