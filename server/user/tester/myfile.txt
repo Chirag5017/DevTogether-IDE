@@ -1,3 +1,7 @@
 // some comment
-hello user i am chirag
-teri maa ki chut bsdk
+hello user i am chirag yo yoo
+
+TERMINAL
+
+
+$0

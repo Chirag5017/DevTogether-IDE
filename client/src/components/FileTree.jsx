@@ -22,7 +22,10 @@ const FileTreeNode = ({  treeName , nodes, path, setSelectedFolder, onSelect }) 
         <div onClick = {(e) => {
           e.stopPropagation()
           handleToggle() // open and close the folders
-        }} className= {"cursor-pointer"}> {treeName} </div>
+        }} className= {"cursor-pointer"}> 
+          {treeName != "FILE BOX" ? (isDir ? (isOpen ? "📂" : "📁") : "📄") : ""}
+         {treeName} 
+         </div>
         { isOpen && nodes && (
           <ul>
             {Object.keys(nodes).map((child) => (
@@ -50,7 +53,7 @@ const FileTreeNode = ({  treeName , nodes, path, setSelectedFolder, onSelect }) 
       },[])
       socket.on("file:refresh", getFileTree())
     return <FileTreeNode  
-             treeName="/"  
+             treeName="FILE BOX"  
              nodes={fileTree}
              path=""
              setSelectedFolder={setSelectedFolder}
