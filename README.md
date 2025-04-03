@@ -34,7 +34,7 @@ DevTogether IDE is a full-featured development environment that runs in your bro
 ## 📁 Project Structure
 
 ```
-├── Frontend
+├── client
 │   ├── App.jsx              # Main application component
 │   ├── components
 │   │   ├── Editor.jsx       # Monaco editor component
@@ -44,7 +44,7 @@ DevTogether IDE is a full-featured development environment that runs in your bro
 │   └── utils
 │       └── getFileExtension.js  # Utility for file extension detection
 │
-├── Backend
+├── server
 │   ├── index.js             # Entry point for the application
 │   ├── app.js               # Express and Socket.io server setup
 │   ├── routes
@@ -113,17 +113,22 @@ Here are some screenshots of DevTogether IDE in action:
    cd DevTogether-IDE
    ```
 
-2. Install dependencies:
+2. Navigate to the frontend directory:
+   ```
+   cd client
+   ```
+
+3. Install dependencies:
    ```
    npm install
    ```
 
-3. Start the development server:
+4. Start the development server:
    ```
    npm run dev
    ```
 
-4. Open your browser and navigate to:
+5. Open your browser and navigate to:
    ```
    http://localhost:5173 (or your configured port)
    ```
@@ -132,13 +137,12 @@ Here are some screenshots of DevTogether IDE in action:
 
 1. Navigate to the backend directory:
    ```
-   cd Backend
+   cd server
    ```
 
 2. Install backend dependencies:
    ```
    npm install
-   ```
    ```
 
 3. Start the backend server:
