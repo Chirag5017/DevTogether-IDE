@@ -5,14 +5,14 @@ import Terminal from './components/Terminal'
 const App = () => {
  
   return (
-    <div className = {"flex flex-col"  }>
-    <div className = {"h-[54vh]"}>
-     <div>
+    <div className = {"playground-container flex flex-col"  }>
+    <div className = {"editor-container h-[54vh]"}>
+     <div className={"files"}>
       <FileTree />
       </div>
-     <div></div>
+     <div className={"editor"}></div>
     </div>
-    <div>
+    <div className={"terminal-container"}>
       <Terminal />
     </div>
     </div>
