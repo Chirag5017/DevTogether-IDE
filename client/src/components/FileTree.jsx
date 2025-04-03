@@ -4,13 +4,16 @@ import socket from "../socket.js";
 
 
 // nodes for checking weather the file is a directory or not null means file 
-const FileTreeNode = ({  treeName , nodes, path, setSelectedFolder }) => {
+const FileTreeNode = ({  treeName , nodes, path, setSelectedFolder, onSelect }) => {
   const [isOpen, setIsOpen] = useState(false)
   const isDir = !! nodes
 
   const handleToggle = () => {
    if(isDir) {
     setIsOpen(!isOpen)
+   }
+   else {
+    onSelect(path)
    }
   }
 
@@ -24,7 +27,7 @@ const FileTreeNode = ({  treeName , nodes, path, setSelectedFolder }) => {
           <ul>
             {Object.keys(nodes).map((child) => (
               <li key={child}>
-                <FileTreeNode treeName={child} nodes={nodes[child]} />
+                <FileTreeNode treeName={child} nodes={nodes[child]} onSelect={onSelect} path={path + "/" + child} />
               </li>
             ))}
           </ul>
@@ -33,7 +36,7 @@ const FileTreeNode = ({  treeName , nodes, path, setSelectedFolder }) => {
     );
   };
   
-  const FileTree = () => {
+  const FileTree = ({onSelect}) => {
      const [fileTree, setFileTree] = useState({})
      const [selectedFolder, setSelectedFolder] = useState("")
 
@@ -51,6 +54,7 @@ const FileTreeNode = ({  treeName , nodes, path, setSelectedFolder }) => {
              nodes={fileTree}
              path=""
              setSelectedFolder={setSelectedFolder}
+             onSelect={onSelect}
           />;
   };
   export default FileTree;

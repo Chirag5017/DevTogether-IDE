@@ -5,6 +5,7 @@ import { Server as SocketServer}  from "socket.io"
 import pty from "node-pty-prebuilt-multiarch"
 import os from "os"
 import chokidar from "chokidar"
+import fs from "fs/promises"
 
 
 const app = express()
@@ -45,9 +46,20 @@ io.on("connection" , (socket) => {
     socket.on("terminal:write", (data) => {
         ptyProcess.write(data);
     }) // data comes from frontend
+
+    socket.on("file:change" , async ({path, content}) => {
+       await fs.writeFile(`./user/${path}`, content)
+    })
 })
 
+
+app.get("/api/file-content", async(req, res) => {
+    const {path} = req.query;
+    const content = await fs.readFile(`./user/${path}`, "utf-8")
+    res.json({content})
+})
 import router from "./routes/ide.routes.js"
+
 
 app.use("/api" , router)
 
