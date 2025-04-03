@@ -28,7 +28,7 @@ DevTogether IDE is a full-featured development environment that runs in your bro
 
 - **🚂 Express**: Web server framework
 - **🔄 Socket.io**: Real-time bidirectional communication
-- **🧩 node-pty**: Terminal process spawning
+- **🧩 node-pty-prebuilt-multiarch**: Terminal process spawning
 - **👀 chokidar**: File system watcher for change detection
 
 ## 📁 Project Structure
