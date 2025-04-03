@@ -2,15 +2,33 @@ import { useState, useRef, useEffect } from 'react'
 import FileTree from './components/FileTree'
 import Terminal from './components/Terminal'
 import Editor from './components/Editor.jsx'
+import socket from './socket.js'
 
 const App = () => {
   const [selectedFile, setSelectedFile] = useState("")
+  const [selectedFolder, setSelectedFolder] = useState("")
   const [sidebarWidth, setSidebarWidth] = useState(240)
   const [terminalHeight, setTerminalHeight] = useState(180)
   const sidebarRef = useRef(null)
   const terminalRef = useRef(null)
   const [isDraggingSidebar, setIsDraggingSidebar] = useState(false)
   const [isDraggingTerminal, setIsDraggingTerminal] = useState(false)
+
+  const addFile = () => {
+    const fileName = prompt("Enter file name (with extension):");
+    if (fileName) {
+      const filePath = selectedFolder ? `${selectedFolder}/${fileName}` : fileName;
+      socket.emit("file:create", { path: filePath, type: "file" });
+    }
+  };
+
+  const addFolder = () => {
+    const folderName = prompt("Enter folder name:");
+    if (folderName) {
+      const folderPath = selectedFolder ? `${selectedFolder}/${folderName}` : folderName;
+      socket.emit("file:create", { path: folderPath, type: "folder" });
+    }
+  };
   
   // Handle sidebar resizing
   useEffect(() => {
@@ -61,19 +79,25 @@ const App = () => {
             <span className="uppercase tracking-wider">EXPLORER</span>
             <div className="flex-1"></div>
             <div className="flex space-x-2">
-              <button className="text-gray-400 hover:text-white p-1">
-                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+              {/* New File Button */}
+              <button 
+                onClick={addFile}
+                className="text-gray-400 hover:text-white p-1"
+                title="New File"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
               </button>
-              <button className="text-gray-400 hover:text-white p-1">
-                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M8 3a5 5 0 1 0 0 10A5 5 0 0 0 8 3z"/>
-                </svg>
-              </button>
-              <button className="text-gray-400 hover:text-white p-1">
-                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 16 16">
-                  <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z"/>
+              
+              {/* New Folder Button */}
+              <button 
+                onClick={addFolder}
+                className="text-gray-400 hover:text-white p-1"
+                title="New Folder"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
                 </svg>
               </button>
             </div>
@@ -81,12 +105,13 @@ const App = () => {
           
           {/* FileTree component */}
           <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-[#3a3d41] scrollbar-track-[#252526]">
-            <FileTree onSelect={(path) => {
-              console.log(path);
-              setSelectedFile(path)
-            }}/>
+            <FileTree 
+              onSelect={(path) => setSelectedFile(path)}
+              setSelectedFolder={setSelectedFolder}
+            />
           </div>
         </div>
+        
         
         {/* Sidebar resize handle */}
         <div 
@@ -100,14 +125,14 @@ const App = () => {
           <div className="flex items-center h-8 bg-[#252526] border-b border-[#1e1e1e]">
             {selectedFile && (
               <div className="flex items-center h-full px-3 bg-[#1e1e1e] border-r border-[#1e1e1e]">
-                <span className="text-xs text-gray-300">{selectedFile.split('/').pop()}</span>
+                 <span className="text-xs text-gray-300">{selectedFile.split('/').pop()}</span>
               </div>
-            )}
-          </div>
+            )} 
+          </div> 
           
           {/* Breadcrumb path */}
           <div className="bg-[#252526] px-3 py-1 text-xs text-[#569cd6] border-b border-[#1e1e1e]">
-            {selectedFile ? selectedFile.replaceAll("/", " > ") : "Welcome"}
+            {selectedFile ? selectedFile.replaceAll("/", " > ") : "Welcome to DevTogether"}
           </div>
           
           {/* Editor with VS Code logo or content */}

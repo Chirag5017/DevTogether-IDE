@@ -6,10 +6,10 @@ app.use("/", (req, res) => {
     res.send("Hello World");
 })
 
-app.listen(8001, (err) => {
+app.listen(8000, (err) => {
     if(err) {
         console.error(`Error occurred while listening to the server : ${err}`);
     }else{
-        console.log(`Server is listening at http://localhost:8001`);
+        console.log(`Server is listening at http://localhost:8000`);
     }
 })
