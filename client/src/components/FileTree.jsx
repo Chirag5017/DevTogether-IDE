@@ -10,11 +10,11 @@ const FileTreeNode = ({  treeName , nodes, path, setSelectedFolder, onSelect }) 
 
   const handleToggle = () => {
    if(isDir) {
-    setIsOpen(!isOpen)
-    setSelectedFolder(path);
+    setIsOpen(!isOpen)  // open and close the folders
+    setSelectedFolder(path); // set the selected folder for adding files and folders
    }
    else {
-    onSelect(path);
+    onSelect(path); // select the file for opening in editor
    }
   }
 
@@ -31,14 +31,19 @@ const FileTreeNode = ({  treeName , nodes, path, setSelectedFolder, onSelect }) 
           <ul>
             {Object.keys(nodes).map((child) => (
               <li key={child}>
-                <FileTreeNode treeName={child} nodes={nodes[child]} onSelect={onSelect} path={path + "/" + child} setSelectedFolder={setSelectedFolder} />
+                <FileTreeNode 
+                treeName={child} 
+                nodes={nodes[child]} 
+                onSelect={onSelect} 
+                path={path + "/" + child} 
+                setSelectedFolder={setSelectedFolder} />
               </li>
             ))}
           </ul>
         )}
       </div>
-    );
-  };
+    )
+  }
   
   const FileTree = ({onSelect}) => {
      const [fileTree, setFileTree] = useState({})
@@ -66,7 +71,7 @@ const FileTreeNode = ({  treeName , nodes, path, setSelectedFolder, onSelect }) 
           
           socket.emit("file:create", { path: filePath, type: "file" });
         }
-      };
+      }
     
       const addFolder = () => {
         const folderName = prompt("Enter folder name:");
@@ -74,7 +79,7 @@ const FileTreeNode = ({  treeName , nodes, path, setSelectedFolder, onSelect }) 
           const folderPath = selectedFolder ? `${selectedFolder}/${folderName}` : folderName;
           socket.emit("file:create", { path: folderPath, type: "folder" });
         }
-      };
+      }
     return (
       <div>
          <button onClick={addFile}>➕ Add File</button>
@@ -85,8 +90,8 @@ const FileTreeNode = ({  treeName , nodes, path, setSelectedFolder, onSelect }) 
              path=""
              setSelectedFolder={setSelectedFolder}
              onSelect={onSelect}
-          />;
+          />
       </div>
     )
-  };
+  }
   export default FileTree;

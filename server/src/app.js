@@ -71,16 +71,10 @@ io.on("connection" , (socket) => {
       });
 })
 
-
-app.get("/api/file-content", async(req, res) => {
-    const {path} = req.query;
-    const content = await fs.readFile(`./user/${path}`, "utf-8")
-    res.json({content})
-})
 import router from "./routes/ide.routes.js"
 
 
-app.use("/api" , router)
+app.use("/api", router)
 
 
 export { io, server, app}
