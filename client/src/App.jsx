@@ -74,8 +74,8 @@ const App = () => {
           style={{ width: `${sidebarWidth}px` }}
         >
           {/* Explorer header */}
-          <div className="flex items-center h-8 bg-[#252525] border-b border-[#333333] text-xs text-[#ffffff] font-medium px-3">
-            <span className="uppercase tracking-wider">EXPLORER</span>
+          <div className="flex items-center h-8 bg-[#252525] border-b border-[#333333] text-xs text-[#ffffff] font-medium h-11 px-4">
+           <div className="p-1"> <span className="uppercase tracking-wider">EXPLORER</span></div>
             <div className="flex-1"></div>
             <div className="flex space-x-2">
               <button 
@@ -133,7 +133,7 @@ const App = () => {
               <span className="text-[#ffffff]">{selectedFile.replaceAll("/", " > ")}</span>
             ) : (
               <div className="flex justify-center">
-                <span className="text-[#ffffff]">Welcome to DevTogether</span>
+                <span className="text-[#ffffff] p-1 tracking-wider font-medium text-lg">Welcome to DevTogether</span>
               </div>
             )}
           </div>
