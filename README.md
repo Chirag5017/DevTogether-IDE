@@ -45,6 +45,7 @@ DevTogether IDE is a full-featured development environment that runs in your bro
 │       └── getFileExtension.js  # Utility for file extension detection
 │
 ├── Backend
+│   ├── index.js             # Entry point for the application
 │   ├── app.js               # Express and Socket.io server setup
 │   ├── routes
 │   │   └── ide.routes.js    # API endpoints for file operations
@@ -80,34 +81,36 @@ DevTogether IDE is a full-featured development environment that runs in your bro
 Here are some screenshots of DevTogether IDE in action:
 
 ### Main Interface
-![DevTogether IDE Main Interface](/api/placeholder/800/450)
+![image](https://github.com/user-attachments/assets/487d0ed2-c400-459e-ade7-80b962b41d89)
 *The full DevTogether IDE interface showing the file explorer, editor, and terminal*
 
 ### Code Editing
-![Code Editing with Syntax Highlighting](/api/placeholder/800/450)
+![image](https://github.com/user-attachments/assets/9bcbdea0-d748-47a1-87a8-8ce4c705f6c7)
+
 *Editing JavaScript code with syntax highlighting and autocompletion*
 
 ### Terminal Usage
-![Terminal Integration](/api/placeholder/800/450)
+![image](https://github.com/user-attachments/assets/1c48d1ca-1f0e-4779-b373-86026c141c9c)
+
 *Using the integrated terminal to run commands directly in the project context*
 
-### Collaborative Editing
+<!-- ### Collaborative Editing
 ![Real-time Collaboration](/api/placeholder/800/450)
-*Multiple users working on the same file simultaneously*
+*Multiple users working on the same file simultaneously* -->
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
-- Node.js (v14+)
+- Node.js (v18+)
 - npm or yarn
 
 ### Installation
 
 1. Clone the repository:
    ```
-   git clone https://github.com/your-username/devtogether.git
-   cd devtogether
+   https://github.com/Chirag5017/DevTogether-IDE.git
+   cd DevTogether-IDE
    ```
 
 2. Install dependencies:
@@ -124,6 +127,26 @@ Here are some screenshots of DevTogether IDE in action:
    ```
    http://localhost:5173 (or your configured port)
    ```
+
+### Backend Installation
+
+1. Navigate to the backend directory:
+   ```
+   cd Backend
+   ```
+
+2. Install backend dependencies:
+   ```
+   npm install
+   ```
+   ```
+
+3. Start the backend server:
+   ```
+   npm run start
+   ```
+
+4. Ensure both frontend and backend are running for full functionality.
 
 ## 📖 Usage
 
@@ -143,7 +166,3 @@ Here are some screenshots of DevTogether IDE in action:
 ## 👥 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
