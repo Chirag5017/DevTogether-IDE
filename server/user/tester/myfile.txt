@@ -1,7 +1,8 @@
-// some comment
+
 hello user i am chirag yo yoo
 
 TERMINAL
 
 
 $0
+

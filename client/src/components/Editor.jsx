@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import MonacoEditor from '@monaco-editor/react';
 import socket from '../socket';
 import axios from 'axios'
+import { getFileExtension } from '../utils/getFileExtension';
 
 const Editor = ({selectedFile}) => {
   const [code, setCode] = useState("")
@@ -38,10 +39,8 @@ const Editor = ({selectedFile}) => {
     },[fileContent])
   
   return (
-    <MonacoEditor
-     height="90vh" 
-     defaultLanguage="javascript" 
-     defaultValue="// some comment" 
+    <MonacoEditor 
+     language={getFileExtension({ selectedFile })}
      theme='vs-dark' 
      value={code} 
      onChange={(e) => setCode(e)} 

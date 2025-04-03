@@ -6,7 +6,7 @@ import pty from "node-pty-prebuilt-multiarch"
 import os from "os"
 import chokidar from "chokidar"
 import fs from "fs/promises"
-
+import path from "path"
 
 const app = express()
 const server = http.createServer(app)
@@ -33,7 +33,7 @@ const   ptyProcess = pty.spawn(shell, [], {
 });
 
 chokidar.watch('./user').on('all', (event, path) => {
-    console.log(event,path);
+    //console.log(event,path);
     
    io.emit("file:refresh")
   });
@@ -50,6 +50,25 @@ io.on("connection" , (socket) => {
     socket.on("file:change" , async ({path, content}) => {
        await fs.writeFile(`./user/${path}`, content)
     })
+
+    socket.on('file:create', async ({ path: relativePath, type }) => {
+        try {
+            console.log(`Creating ${type}:`, relativePath);
+            
+          const fullPath = path.join("./user", relativePath);
+          console.log(fullPath);
+          
+          if (type === 'folder') {
+            await fs.mkdir(fullPath, { recursive: true });
+          } else {
+            await fs.writeFile(fullPath, '', { flag: 'wx' });
+          }
+          io.emit('file:refresh');
+        } catch (error) {
+          console.error(`Error creating ${type}:`, error.message);
+          //socket.emit('error', { message: error.message });
+        }
+      });
 })
 
 
