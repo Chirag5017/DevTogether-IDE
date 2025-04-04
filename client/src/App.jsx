@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import FileTree from './components/FileTree'
-import Terminal from './components/Terminal'
+import TerminalManager from './components/TerminalManager' // Changed from Terminal to TerminalManager
 import Editor from './components/Editor.jsx'
 import socket from './socket.js'
 
@@ -67,7 +67,7 @@ const App = () => {
   return (
     <div className="flex flex-col h-screen bg-[#121212] text-[#e0e0e0] overflow-hidden select-none font-[consolas,'Courier New',monospace] cursor-default">
       <div className="flex-1 flex overflow-hidden">
-        {/* Sidebar */}
+        {/* Sidebar - No changes needed here */}
         <div 
           ref={sidebarRef}
           className="flex flex-col bg-[#1e1e1e] border-r border-[#333333]"
@@ -138,7 +138,7 @@ const App = () => {
             )}
           </div>
           
-          {/* Editor area */}
+          {/* Editor area - No changes needed here */}
           <div className="flex-1 overflow-hidden relative bg-[#121212]">
             {selectedFile ? (
               <Editor selectedFile={selectedFile} />
@@ -181,21 +181,13 @@ const App = () => {
             onMouseDown={() => setIsDraggingTerminal(true)}
           />
           
-          {/* Terminal panel */}
+          {/* Terminal panel - This is the main changed section */}
           <div 
             ref={terminalRef}
             className="bg-[#121212] border-t border-[#333333] flex flex-col"
             style={{ height: `${terminalHeight}px` }}
           >
-            <div className="flex text-xs h-8 bg-[#252525] border-b border-[#333333]">
-              <div className="flex items-center px-4 h-full bg-[#121212] border-t-2 border-[#ffffff] text-[#ffffff]">
-                TERMINAL
-              </div>
-            </div>
-            
-            <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-[#444444] scrollbar-track-[#252525] p-3 font-mono text-sm bg-[#121212]">
-              <Terminal />
-            </div>
+            <TerminalManager terminalHeight={terminalHeight} />
           </div>
         </div>
       </div>

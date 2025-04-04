@@ -24,13 +24,7 @@ app.use(express.static("public"))
 
 var shell = os.platform() === 'win32' ? 'powershell.exe' : 'bash';
 
-const   ptyProcess = pty.spawn(shell, [], {
-  name: 'xterm-color',
-  cols: 80,
-  rows: 30,
-  cwd: process.env.INIT_CWD + "./user", // terminal start on current working directory
-  env: process.env
-});
+const terminals= new Map()
 
 chokidar.watch('./user').on('all', (event, path) => {
     //console.log(event,path);
@@ -38,14 +32,49 @@ chokidar.watch('./user').on('all', (event, path) => {
    io.emit("file:refresh")
   });
 
-ptyProcess.onData(data =>{
-    io.emit("terminal:data", data)
-}) // after execution in backend ans goes to frontend
+// ptyProcess.onData(data =>{
+//     io.emit("terminal:data", data)
+// }) // after execution in backend ans goes to frontend
 
 io.on("connection" , (socket) => {
-    socket.on("terminal:write", (data) => {
-        ptyProcess.write(data);
-    }) // data comes from frontend
+
+  const createTerminal = (terminalId) => {
+    const ptyProcess = pty.spawn(shell, [], {
+      name: 'xterm-color',
+      cols: 80,
+      rows: 30,
+      cwd: path.join(process.env.INIT_CWD, "user"), // Fixed path
+      env: process.env
+    });
+
+    terminals.set(terminalId, ptyProcess);
+
+    ptyProcess.onData((output) => {
+          const id =terminalId
+          console.log(id, output);
+          
+          socket.emit("terminal:data",{id, output})
+          //console.log( terminalId,data);
+        })
+  }
+  socket.on("terminal:write", ({ terminalId, data }) => {
+     //console.log(terminalId, data);
+    const ptyProcess = terminals.get(terminalId);
+    if (ptyProcess) {
+      ptyProcess.write(data);
+    } 
+  })
+
+
+    socket.on("terminal:create", (terminalId) => {
+       // console.log("terminal created", terminalId);
+        createTerminal(terminalId)
+    })
+    
+      
+    // socket.on("terminal:write", (data) => {
+    //     ptyProcess.write(data);
+    // }) // data comes from frontend
 
     socket.on("file:change" , async ({path, content}) => {
        await fs.writeFile(`./user/${path}`, content)

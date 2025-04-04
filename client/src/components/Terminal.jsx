@@ -4,12 +4,14 @@ import { FitAddon } from '@xterm/addon-fit'
 import "@xterm/xterm/css/xterm.css"
 import socket from "../socket.js"
 
-const Terminal = () => {
+const Terminal = ({terminalId,height}) => {
+    
     const terminalRef = useRef()
     const [terminal, setTerminal] = useState(null)
     const fitAddon = new FitAddon()
 
     useEffect(() => {
+        console.log(terminalId);
         const term = new Xterminal({
             fontSize: 14,
             fontFamily: 'Consolas, "Courier New", monospace',
@@ -28,13 +30,20 @@ const Terminal = () => {
         fitAddon.fit()
         setTerminal(term)
 
+        socket.emit("terminal:create", terminalId)
         term.onData((data) => {
-            socket.emit("terminal:write", data)
+           // console.log( terminalId, data)
+            socket.emit("terminal:write", { terminalId, data })
         })
 
-        socket.on("terminal:data", (data) => {
-            term.write(data)
-        })
+        // Handle terminal output
+       
+         socket.on("terminal:data", ({id, output}) => {
+            if (id == terminalId) {
+                term.write(output)
+            }
+         })
+
 
         const handleResize = () => {
             fitAddon.fit()
@@ -49,12 +58,11 @@ const Terminal = () => {
     }, [])
 
     return (
-        <div className="h-full w-full p-2">
-            <div 
-                ref={terminalRef} 
-                className="h-full w-full rounded-md overflow-hidden"
-            />
-        </div>
+        <div 
+        ref={terminalRef} 
+        className="h-full w-full p-2"
+        style={{ height: `calc(${height}px - 2rem)` }}
+    />
     )
 }
 

@@ -101,7 +101,11 @@ const FileTree = ({ onSelect, setSelectedFolder, selectedFile }) => {
     getFileTree();
   }, []);
 
-  socket.on("file:refresh", getFileTree());
+  useEffect(() => {
+    socket.on("file:refresh", getFileTree());
+  }, [fileTree])
+  
+  
 
   return (
     <div className="h-full overflow-y-auto scrollbar-thin scrollbar-thumb-[#444444] scrollbar-track-[#252525]">
