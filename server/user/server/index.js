@@ -1,16 +1,12 @@
-const express = require('express');
-const app = express();
-const port = 3000;
+const express = require("express")
+const app = express()
 
-// Middleware to parse JSON
-app.use(express.json());
+app.get("/",(req,res) => {
+  res.json({
+    message:"Welcome to DevTogether"
+  })
+})
 
-// Home route
-app.get('/', (req, res) => {
-    res.send('Welcome to Express.js Server!');
-});
-
-// Start server
-app.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}`);
-});
+app.listen(8000,() =>{
+  console.log("server listenning on 8000")
+})
