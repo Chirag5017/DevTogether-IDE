@@ -2,9 +2,11 @@ import { useState, useRef, useEffect } from 'react'
 import FileTree from './components/FileTree'
 import TerminalManager from './components/TerminalManager'
 import Editor from './components/Editor.jsx'
+import LoadingScreen from './components/LoadingScreen'
 import socket from './socket.js'
 
 const App = () => {
+  const [isLoading, setIsLoading] = useState(true)
   const [selectedFile, setSelectedFile] = useState("")
   const [selectedFolder, setSelectedFolder] = useState("")
   const [sidebarWidth, setSidebarWidth] = useState(240)
@@ -13,6 +15,21 @@ const App = () => {
   const terminalRef = useRef(null)
   const [isDraggingSidebar, setIsDraggingSidebar] = useState(false)
   const [isDraggingTerminal, setIsDraggingTerminal] = useState(false)
+
+  // Handle loading completion
+  useEffect(() => {
+    // Simulate initial loading time
+    const loadingTimer = setTimeout(() => {
+      // In a real application, you might wait for socket connections,
+      // initial file system loading, etc.
+    }, 3000);
+    
+    return () => clearTimeout(loadingTimer);
+  }, []);
+
+  const handleLoadComplete = () => {
+    setIsLoading(false);
+  };
 
   const addFile = () => {
     const fileName = prompt("Enter file name (with extension):")
@@ -65,6 +82,11 @@ const App = () => {
       document.removeEventListener('mouseup', handleMouseUp)
     }
   }, [isDraggingSidebar, isDraggingTerminal])
+
+  // Show loading screen if still loading
+  if (isLoading) {
+    return <LoadingScreen onLoadComplete={handleLoadComplete} />;
+  }
 
   return (
     <div className="flex flex-col h-screen bg-[#121212] text-[#e0e0e0] overflow-hidden select-none font-[consolas,'Courier New',monospace] cursor-default">
