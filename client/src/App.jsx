@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import FileTree from './components/FileTree'
-import TerminalManager from './components/TerminalManager' // Changed from Terminal to TerminalManager
+import TerminalManager from './components/TerminalManager'
 import Editor from './components/Editor.jsx'
 import socket from './socket.js'
 
@@ -30,7 +30,7 @@ const App = () => {
     }
   }
   
-  // Handle sidebar resizing
+  // Handle sidebar and terminal resizing
   useEffect(() => {
     const handleMouseMove = (e) => {
       if (isDraggingSidebar) {
@@ -44,6 +44,8 @@ const App = () => {
         const newHeight = window.innerHeight - e.clientY
         if (newHeight > 100 && newHeight < 500) {
           setTerminalHeight(newHeight)
+          // Ensure terminal content updates when height changes
+          window.dispatchEvent(new Event('resize'))
         }
       }
     }
@@ -67,7 +69,7 @@ const App = () => {
   return (
     <div className="flex flex-col h-screen bg-[#121212] text-[#e0e0e0] overflow-hidden select-none font-[consolas,'Courier New',monospace] cursor-default">
       <div className="flex-1 flex overflow-hidden">
-        {/* Sidebar - No changes needed here */}
+        {/* Sidebar */}
         <div 
           ref={sidebarRef}
           className="flex flex-col bg-[#1e1e1e] border-r border-[#333333]"
@@ -138,7 +140,7 @@ const App = () => {
             )}
           </div>
           
-          {/* Editor area - No changes needed here */}
+          {/* Editor area */}
           <div className="flex-1 overflow-hidden relative bg-[#121212]">
             {selectedFile ? (
               <Editor selectedFile={selectedFile} />
@@ -181,10 +183,10 @@ const App = () => {
             onMouseDown={() => setIsDraggingTerminal(true)}
           />
           
-          {/* Terminal panel - This is the main changed section */}
+          {/* Terminal panel - Fixed container styling */}
           <div 
             ref={terminalRef}
-            className="bg-[#121212] border-t border-[#333333] flex flex-col"
+            className="flex flex-col bg-[#121212] border-t border-[#333333] overflow-hidden"
             style={{ height: `${terminalHeight}px` }}
           >
             <TerminalManager terminalHeight={terminalHeight} />

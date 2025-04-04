@@ -92,7 +92,7 @@ io.on("connection" , (socket) => {
           } else {
             await fs.writeFile(fullPath, '', { flag: 'wx' });
           }
-          io.emit('file:refresh');
+          socket.emit('file:refresh');
         } catch (error) {
           console.error(`Error creating ${type}:`, error.message);
           //socket.emit('error', { message: error.message });

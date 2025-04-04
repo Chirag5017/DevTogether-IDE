@@ -52,7 +52,7 @@ const TerminalManager = ({ terminalHeight }) => {
                         {term.name}
                         {terminals.length > 1 && (
                             <button
-                                className="ml-2 text-[#aaaaaa] hover:text-[#ffffff]"
+                                className="ml-2 text-[#aaaaaa] hover:text-[#ffffff] cursor-pointer"
                                 onClick={(e) => {
                                     e.stopPropagation()
                                     removeTerminal(term.id)
@@ -64,9 +64,10 @@ const TerminalManager = ({ terminalHeight }) => {
                     </div>
                 ))}
                 <button
-                    className="flex items-center px-2 text-[#aaaaaa] hover:text-[#ffffff]"
+                    className="flex items-center px-2 text-[#aaaaaa] hover:text-[#ffffff] cursor-pointer"
                     onClick={addTerminal}
                     title="Add Terminal"
+                    
                 >
                     +
                 </button>
