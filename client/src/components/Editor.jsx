@@ -1,51 +1,64 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import MonacoEditor from '@monaco-editor/react';
 import socket from '../socket';
-import axios from 'axios'
+import axios from 'axios';
 import { getFileExtension } from '../utils/getFileExtension';
 
-const Editor = ({selectedFile}) => {
-  const [code, setCode] = useState("")
-    const [fileContent, setFileContent] = useState("")
-  
-    const getFileContent = async () => {
-        const response = await axios.get(`http://localhost:9000/api/file-content?path=${selectedFile}`)
-        const data = await response.data;
-        setFileContent(data.content)
+const Editor = ({ selectedFile, roomId }) => {
+  const [code, setCode] = useState("");
+  const [fileContent, setFileContent] = useState("");
+
+  const getFileContent = async () => {
+    try {
+      const response = await axios.get(`http://localhost:9000/api/file-content?path=${selectedFile}`);
+      setFileContent(response.data.content);
+    } catch (error) {
+      console.error("Error fetching file content:", error);
     }
-  
-    useEffect(() => {   // when someone write on code editor for saving the code writen in file
-      if(code) {
-        const timer = setTimeout(() => {
-          console.log("code", code)
-          socket.emit("file:change",{
-            path: selectedFile,
-            content: code
-          })
-        }, 1*1000);
-  
-        return () => clearTimeout(timer)
+  };
+
+  useEffect(() => {
+    // Load file content when selected file changes
+    if (selectedFile) {
+      getFileContent();
+    }
+  }, [selectedFile]);
+
+  useEffect(() => {
+    // Update editor content when file content is fetched
+    setCode(fileContent);
+  }, [fileContent]);
+
+  useEffect(() => {
+    // Handle remote changes
+    const handleRemoteChange = ({ path, content }) => {
+      if (path === selectedFile) {
+        setCode(content);
       }
-    }, [code,selectedFile])
-    
-    useEffect(() => {  // when file is selected from file tree all content of the file is fetched
-      if(selectedFile) {
-        getFileContent()
-      }
-    },[selectedFile])
-  
-    useEffect(() => {  // when file content is fetched from backend it is set in the code editor
-      setCode(fileContent)
-    },[fileContent])
-  
+    };
+
+    socket.on('file:change', handleRemoteChange);
+    return () => socket.off('file:change', handleRemoteChange);
+  }, [selectedFile]);
+
+  const handleChange = (newValue) => {
+    setCode(newValue);
+    // Broadcast changes to room
+    socket.emit('file:change', {
+      path: selectedFile,
+      content: newValue,
+      roomId
+    });
+  };
+
   return (
     <MonacoEditor 
-     language={getFileExtension({ selectedFile })}
-     theme='vs-dark' 
-     value={code} 
-     onChange={(e) => setCode(e)} 
-     />
-  )
-}
+      language={getFileExtension({ selectedFile })}
+      theme='vs-dark' 
+      value={code} 
+      onChange={handleChange}
+    />
+  );
+};
 
-export default Editor
+export default Editor;

@@ -7,6 +7,12 @@ app.get("/",(req,res) => {
   })
 })
 
+app.get("/api",(req,res) => {
+  res.json({
+    message:"welcome to api"
+  })
+})
+
 app.listen(8000,() =>{
-  console.log("server listenning on 8000")
+  console.log("server listenning on port 8000")
 })

@@ -75,10 +75,20 @@ io.on("connection" , (socket) => {
     // socket.on("terminal:write", (data) => {
     //     ptyProcess.write(data);
     // }) // data comes from frontend
-
-    socket.on("file:change" , async ({path, content}) => {
-       await fs.writeFile(`./user/${path}`, content)
-    })
+    socket.on('join-room', (roomId) => {
+      socket.join(roomId);
+      console.log(`User ${socket.id} joined room ${roomId}`);
+    });
+  
+    // Broadcast file changes to room
+    socket.on("file:change", async ({ path, content, roomId }) => {
+      try {
+        await fs.writeFile(`./user/${path}`, content);
+        socket.to(roomId).emit("file:change", { path, content });
+      } catch (error) {
+        console.error('Error saving file:', error);
+      }
+    });
 
     socket.on('file:create', async ({ path: relativePath, type }) => {
         try {

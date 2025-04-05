@@ -16,14 +16,28 @@ const App = () => {
   const terminalRef = useRef(null);
   const [isDraggingSidebar, setIsDraggingSidebar] = useState(false);
   const [isDraggingTerminal, setIsDraggingTerminal] = useState(false);
+  const [isRoomOwner, setIsRoomOwner] = useState(false);
+  const [roomId, setRoomId] = useState(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlRoomId = urlParams.get('room');
+    // If no room in URL, we're the owner
+    setIsRoomOwner(!urlRoomId);
+    return urlRoomId || Math.random().toString(36).substring(2, 8);
+  });
 
   useEffect(() => {
+    // Join the collaboration room
+    socket.emit('join-room', roomId);
+    
+    // Set loading timeout
     const loadingTimer = setTimeout(() => {
       setIsLoading(false);
     }, 3000);
     
-    return () => clearTimeout(loadingTimer);
-  }, []);
+    return () => {
+      clearTimeout(loadingTimer);
+    };
+  }, [roomId]);
 
   const handleLoadComplete = () => {
     setIsLoading(false);
@@ -33,7 +47,7 @@ const App = () => {
     const fileName = prompt("Enter file name (with extension):");
     if (fileName) {
       const filePath = selectedFolder ? `${selectedFolder}/${fileName}` : fileName;
-      socket.emit("file:create", { path: filePath, type: "file" });
+      socket.emit("file:create", { path: filePath, type: "file", roomId });
     }
   };
 
@@ -41,7 +55,7 @@ const App = () => {
     const folderName = prompt("Enter folder name:");
     if (folderName) {
       const folderPath = selectedFolder ? `${selectedFolder}/${folderName}` : folderName;
-      socket.emit("file:create", { path: folderPath, type: "folder" });
+      socket.emit("file:create", { path: folderPath, type: "folder", roomId });
     }
   };
   
@@ -125,6 +139,7 @@ const App = () => {
               onSelect={(path) => setSelectedFile(path)}
               setSelectedFolder={setSelectedFolder}
               selectedFile={selectedFile}
+              roomId={roomId}
             />
           </div>
         </div>
@@ -137,7 +152,7 @@ const App = () => {
         
         {/* Main content area */}
         <div className="flex-1 flex flex-col overflow-hidden bg-[#121212]">
-          {/* Modified Breadcrumb with Invite Button */}
+          {/* Modified Breadcrumb with Conditional Invite Button */}
           <div className="bg-[#252525] px-4 py-1 text-xs border-b border-[#333333] flex justify-between items-center">
             {selectedFile ? (
               <span className="text-[#ffffff]">{selectedFile.replaceAll("/", " > ")}</span>
@@ -146,13 +161,13 @@ const App = () => {
                 <span className="text-[#ffffff] p-1 tracking-wider font-medium text-lg">DevTogether IDE</span>
               </div>
             )}
-            <InviteCollaborator />
+            {isRoomOwner && <InviteCollaborator roomId={roomId} />}
           </div>
           
           {/* Editor area */}
           <div className="flex-1 overflow-hidden relative bg-[#121212]">
             {selectedFile ? (
-              <Editor selectedFile={selectedFile} />
+              <Editor selectedFile={selectedFile} roomId={roomId} />
             ) : (
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="text-center max-w-md p-6">

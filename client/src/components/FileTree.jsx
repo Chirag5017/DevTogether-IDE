@@ -88,22 +88,32 @@ const FileTreeNode = ({ treeName, nodes, path, setSelectedFolder, onSelect, sele
   );
 };
 
-const FileTree = ({ onSelect, setSelectedFolder, selectedFile }) => {
+const FileTree = ({ onSelect, setSelectedFolder, selectedFile, roomId }) => {
   const [fileTree, setFileTree] = useState({});
 
   const getFileTree = async () => {
-    const response = await axios.get("http://localhost:9000/api/file-path");
-    const data = await response.data;
-    setFileTree(data.tree);
+    try {
+      const response = await axios.get("http://localhost:9000/api/file-path");
+      setFileTree(response.data.tree);
+    } catch (error) {
+      console.error("Error fetching file tree:", error);
+    }
   };
 
   useEffect(() => {
     getFileTree();
+    
+    // Listen for file refresh events from the server
+    const handleRefresh = () => {
+      getFileTree();
+    };
+
+    socket.on("file:refresh", handleRefresh);
+    
+    return () => {
+      socket.off("file:refresh", handleRefresh);
+    };
   }, []);
- 
-  socket.on("file:refresh", getFileTree())
-
-
 
   return (
     <div className="h-full overflow-y-auto scrollbar-thin scrollbar-thumb-[#444444] scrollbar-track-[#252525]">
