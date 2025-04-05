@@ -1,27 +1,25 @@
-import { useState, useRef, useEffect } from 'react'
-import FileTree from './components/FileTree'
-import TerminalManager from './components/TerminalManager'
-import Editor from './components/Editor.jsx'
-import LoadingScreen from './components/LoadingScreen'
-import socket from './socket.js'
+import { useState, useRef, useEffect } from 'react';
+import FileTree from './components/FileTree';
+import TerminalManager from './components/TerminalManager';
+import Editor from './components/Editor.jsx';
+import LoadingScreen from './components/LoadingScreen';
+import socket from './socket.js';
+import InviteCollaborator from './components/InviteCollaborator';
 
 const App = () => {
-  const [isLoading, setIsLoading] = useState(true)
-  const [selectedFile, setSelectedFile] = useState("")
-  const [selectedFolder, setSelectedFolder] = useState("")
-  const [sidebarWidth, setSidebarWidth] = useState(240)
-  const [terminalHeight, setTerminalHeight] = useState(180)
-  const sidebarRef = useRef(null)
-  const terminalRef = useRef(null)
-  const [isDraggingSidebar, setIsDraggingSidebar] = useState(false)
-  const [isDraggingTerminal, setIsDraggingTerminal] = useState(false)
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedFile, setSelectedFile] = useState("");
+  const [selectedFolder, setSelectedFolder] = useState("");
+  const [sidebarWidth, setSidebarWidth] = useState(240);
+  const [terminalHeight, setTerminalHeight] = useState(180);
+  const sidebarRef = useRef(null);
+  const terminalRef = useRef(null);
+  const [isDraggingSidebar, setIsDraggingSidebar] = useState(false);
+  const [isDraggingTerminal, setIsDraggingTerminal] = useState(false);
 
-  // Handle loading completion
   useEffect(() => {
-    // Simulate initial loading time
     const loadingTimer = setTimeout(() => {
-      // In a real application, you might wait for socket connections,
-      // initial file system loading, etc.
+      setIsLoading(false);
     }, 3000);
     
     return () => clearTimeout(loadingTimer);
@@ -32,58 +30,55 @@ const App = () => {
   };
 
   const addFile = () => {
-    const fileName = prompt("Enter file name (with extension):")
+    const fileName = prompt("Enter file name (with extension):");
     if (fileName) {
-      const filePath = selectedFolder ? `${selectedFolder}/${fileName}` : fileName
-      socket.emit("file:create", { path: filePath, type: "file" })
+      const filePath = selectedFolder ? `${selectedFolder}/${fileName}` : fileName;
+      socket.emit("file:create", { path: filePath, type: "file" });
     }
-  }
+  };
 
   const addFolder = () => {
-    const folderName = prompt("Enter folder name:")
+    const folderName = prompt("Enter folder name:");
     if (folderName) {
-      const folderPath = selectedFolder ? `${selectedFolder}/${folderName}` : folderName
-      socket.emit("file:create", { path: folderPath, type: "folder" })
+      const folderPath = selectedFolder ? `${selectedFolder}/${folderName}` : folderName;
+      socket.emit("file:create", { path: folderPath, type: "folder" });
     }
-  }
+  };
   
-  // Handle sidebar and terminal resizing
   useEffect(() => {
     const handleMouseMove = (e) => {
       if (isDraggingSidebar) {
-        const newWidth = e.clientX
+        const newWidth = e.clientX;
         if (newWidth > 160 && newWidth < 500) {
-          setSidebarWidth(newWidth)
+          setSidebarWidth(newWidth);
         }
       }
       
       if (isDraggingTerminal) {
-        const newHeight = window.innerHeight - e.clientY
+        const newHeight = window.innerHeight - e.clientY;
         if (newHeight > 100 && newHeight < 500) {
-          setTerminalHeight(newHeight)
-          // Ensure terminal content updates when height changes
-          window.dispatchEvent(new Event('resize'))
+          setTerminalHeight(newHeight);
+          window.dispatchEvent(new Event('resize'));
         }
       }
-    }
+    };
 
     const handleMouseUp = () => {
-      setIsDraggingSidebar(false)
-      setIsDraggingTerminal(false)
-    }
+      setIsDraggingSidebar(false);
+      setIsDraggingTerminal(false);
+    };
 
     if (isDraggingSidebar || isDraggingTerminal) {
-      document.addEventListener('mousemove', handleMouseMove)
-      document.addEventListener('mouseup', handleMouseUp)
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
     }
 
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove)
-      document.removeEventListener('mouseup', handleMouseUp)
-    }
-  }, [isDraggingSidebar, isDraggingTerminal])
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDraggingSidebar, isDraggingTerminal]);
 
-  // Show loading screen if still loading
   if (isLoading) {
     return <LoadingScreen onLoadComplete={handleLoadComplete} />;
   }
@@ -99,7 +94,7 @@ const App = () => {
         >
           {/* Explorer header */}
           <div className="flex items-center h-8 bg-[#252525] border-b border-[#333333] text-xs text-[#ffffff] font-medium h-11 px-4">
-           <div className="p-1"> <span className="uppercase tracking-wider">EXPLORER</span></div>
+            <div className="p-1"><span className="uppercase tracking-wider">EXPLORER</span></div>
             <div className="flex-1"></div>
             <div className="flex space-x-2">
               <button 
@@ -142,24 +137,16 @@ const App = () => {
         
         {/* Main content area */}
         <div className="flex-1 flex flex-col overflow-hidden bg-[#121212]">
-          {/* Editor tabs - only shown when file is selected */}
-          {selectedFile && (
-            <div className="flex items-center h-8 bg-[#252525] border-b border-[#333333]">
-              <div className="flex items-center h-full px-4 bg-[#121212] border-t-2 border-[#ffffff] text-[#ffffff]">
-                <span className="text-xs">{selectedFile.split('/').pop()}</span>
-              </div>
-            </div>
-          )}
-          
-          {/* Modified Breadcrumb */}
-          <div className="bg-[#252525] px-4 py-1 text-xs border-b border-[#333333]">
+          {/* Modified Breadcrumb with Invite Button */}
+          <div className="bg-[#252525] px-4 py-1 text-xs border-b border-[#333333] flex justify-between items-center">
             {selectedFile ? (
               <span className="text-[#ffffff]">{selectedFile.replaceAll("/", " > ")}</span>
             ) : (
-              <div className="flex justify-center">
-                <span className="text-[#ffffff] p-1 tracking-wider font-medium text-lg">Welcome to DevTogether</span>
+              <div className="flex justify-center flex-1">
+                <span className="text-[#ffffff] p-1 tracking-wider font-medium text-lg">DevTogether IDE</span>
               </div>
             )}
+            <InviteCollaborator />
           </div>
           
           {/* Editor area */}
@@ -205,7 +192,7 @@ const App = () => {
             onMouseDown={() => setIsDraggingTerminal(true)}
           />
           
-          {/* Terminal panel - Fixed container styling */}
+          {/* Terminal panel */}
           <div 
             ref={terminalRef}
             className="flex flex-col bg-[#121212] border-t border-[#333333] overflow-hidden"
@@ -216,7 +203,7 @@ const App = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;
