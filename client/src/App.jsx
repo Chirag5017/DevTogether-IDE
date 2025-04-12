@@ -5,6 +5,7 @@ import Editor from './components/Editor.jsx';
 import LoadingScreen from './components/LoadingScreen';
 import socket from './socket.js';
 import InviteCollaborator from './components/InviteCollaborator';
+import VideoCall from './components/VideoCall';
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -217,6 +218,7 @@ const App = () => {
           </div>
         </div>
       </div>
+      <VideoCall roomId={roomId} />
     </div>
   );
 };
